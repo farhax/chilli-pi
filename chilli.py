@@ -1,6 +1,7 @@
 
 import grovepi
 import math
+import socket
 
 from grove_rgb_lcd import *
 
