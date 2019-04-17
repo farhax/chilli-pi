@@ -9,6 +9,13 @@ light_sensor = 0  # Grove Light Sensor to analog port A0
 
 grovepi.pinMode(light_sensor, "INPUT")
 
+# ugly hack, but get the ip and shows on startup on screen.
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.connect(("8.8.8.8", 80))
+ip = s.getsockname()[0]
+s.close()
+
+i = 0
 while True:
     try:
         # blue=0, white=1
@@ -26,9 +33,15 @@ while True:
 
         # Calculate resistance of sensor in K
         resistance = (float)(1023 - sensor_value) * 10 / sensor_value
-        secondRow = "%d %d" % (sensor_value, resistance)
+
+        i = (i + 1) % 10
+        if i < 3:
+            secondRow = ip
+        else:
+            secondRow = "%d %d" % (sensor_value, resistance)
 
         setText(firstRow + "\n" + secondRow)
+        print(firstRow + "\n" + secondRow)
         time.sleep(1.00)
 
     except IOError:
