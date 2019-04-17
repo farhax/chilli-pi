@@ -26,7 +26,7 @@ i = 0
 while True:
     try:
         hh = dt.datetime.now().hour
-        if hh >= onTime && hh < offTime:
+        if hh >= onTime and hh < offTime:
             # switch on
             grovepi.digitalWrite(relay, 1)
         else:
