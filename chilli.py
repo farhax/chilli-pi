@@ -10,6 +10,9 @@ dht_sensor = 3  # The Temp & Hum Sensor goes on digital port 3.
 relay = 4 # Connect the Grove Relay to digital port D4
 light_sensor = 0  # Grove Light Sensor to analog port A0
 
+onTime = 5
+offTime = 21
+
 grovepi.pinMode(light_sensor, "INPUT")
 grovepi.pinMode(relay, "OUTPUT")
 
@@ -22,7 +25,8 @@ s.close()
 i = 0
 while True:
     try:
-        if True:
+        hh = dt.datetime.now().hour
+        if hh >= onTime && hh < offTime:
             # switch on
             grovepi.digitalWrite(relay, 1)
         else:
@@ -57,7 +61,6 @@ while True:
 
     except KeyboardInterrupt:
         grovepi.digitalWrite(relay, 0)
-        print("exit")
         break
     except IOError:
         print("IO Error")
