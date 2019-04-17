@@ -14,21 +14,22 @@ while True:
         # blue=0, white=1
         [temp, humidity] = grovepi.dht(dht_sensor, 0)
         setRGB(32, 128, 32)
-        if math.isnan(temp) is False and math.isnan(humidity) is False:
-            setText("Temp:  %.02f C\nHumid: %.02f%%" % (temp, humidity))
-        else:
-            setText("Error: no temp \nno humidity")
 
-        time.sleep(2.00)
-        setRGB(64, 128, 64)
+        firstRow = ""
+        secondRow = ""
+
+        if math.isnan(temp) is False and math.isnan(humidity) is False:
+            firstRow = "%dC %d%%" % (temp, humidity)
 
         # Get sensor value
         sensor_value = grovepi.analogRead(light_sensor)
 
         # Calculate resistance of sensor in K
         resistance = (float)(1023 - sensor_value) * 10 / sensor_value
-        setText("Light: %d \nResist: %.2fK" % (sensor_value, resistance))
-        time.sleep(2.00)
+        secondRow = "%d %d" % (sensor_value, resistance)
+
+        setText(firstRow + "\n" + secondRow)
+        time.sleep(1.00)
 
     except IOError:
         print ("Error")
