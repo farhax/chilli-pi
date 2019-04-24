@@ -3,11 +3,28 @@ import grovepi
 import math
 import socket
 import datetime as dt
+import logging
 
+from logging.handlers import TimedRotatingFileHandler
 from grove_rgb_lcd import *
 
+logger = logging.getLogger('myapp')
+# hdlr = logging.FileHandler('/var/tmp/myapp.log')
+logname = "logs/chilli.log"
+handler = TimedRotatingFileHandler(logname, when="midnight", interval=1)
+handler.suffix = "%Y%m%d"
+formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+logger.setLevel(logging.INFO)
+
+
+def log(temp, humidity, sensor_value, switchOn):
+    logger.info("temp: %0.2fC, humidity: %0.2f%%, light-sensor: %d, light-switch: %d" % (temp, humidity, sensor_value, switchOn))
+
+
 dht_sensor = 3  # The Temp & Hum Sensor goes on digital port 3.
-relay = 4 # Connect the Grove Relay to digital port D4
+relay = 4  # Connect the Grove Relay to digital port D4
 light_sensor = 0  # Grove Light Sensor to analog port A0
 
 onTime = 5
@@ -29,9 +46,11 @@ while True:
         if hh >= onTime and hh < offTime:
             # switch on
             grovepi.digitalWrite(relay, 1)
+            switchOn = True
         else:
             # switch off
             grovepi.digitalWrite(relay, 0)
+            switchOn = False
 
         # blue=0, white=1
         [temp, humidity] = grovepi.dht(dht_sensor, 0)
@@ -58,6 +77,9 @@ while True:
         else:
             secondRow = "%d %d" % (sensor_value, resistance)
 
+        if i == 0:  # log every 10s
+            log(temp, humidity, sensor_value, switchOn)
+
         setText(firstRow + "\n" + secondRow)
         print(firstRow + "\n" + secondRow)
         time.sleep(1.00)
@@ -66,4 +88,5 @@ while True:
         grovepi.digitalWrite(relay, 0)
         break
     except IOError:
+        logger.error('IO Error')
         print("IO Error")
