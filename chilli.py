@@ -6,6 +6,7 @@ import datetime as dt
 import logging
 
 from logging.handlers import TimedRotatingFileHandler
+from picamera import PiCamera
 from grove_rgb_lcd import *
 
 logger = logging.getLogger('myapp')
@@ -23,6 +24,10 @@ def log(temp, humidity, sensor_value, switchOn):
     logger.info("temp: %0.2fC, humidity: %0.2f%%, light-sensor: %d, light-switch: %d" % (temp, humidity, sensor_value, switchOn))
 
 
+def captureImage():
+    camera.capture('images/%s.jpg' % dt.datetime.now())
+
+
 dht_sensor = 3  # The Temp & Hum Sensor goes on digital port 3.
 relay = 4  # Connect the Grove Relay to digital port D4
 light_sensor = 0  # Grove Light Sensor to analog port A0
@@ -38,6 +43,12 @@ s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s.connect(("8.8.8.8", 80))
 ip = s.getsockname()[0]
 s.close()
+
+print("starting chilli-pi, waiting for camera")
+camera = PiCamera()
+camera.start_preview()
+time.sleep(5.00)
+
 
 i = 0
 while True:
@@ -71,14 +82,14 @@ while True:
         else:
             resistance = (float)(1023 - sensor_value) * 10 / sensor_value
 
-        i = (i + 1) % 10
-        if i < 3:
-            secondRow = ip
-        else:
-            secondRow = "%d %d" % (sensor_value, resistance)
+        i = (i + 1) % 3600
+        secondRow = "%d %d" % (sensor_value, resistance)
 
-        if i == 0:  # log every 10s
+        if i % 10 == 0:  # log every 10s
             log(temp, humidity, sensor_value, switchOn)
+
+        if i == 0:  # capture image every hour
+            captureImage()
 
         setText(firstRow + "\n" + secondRow)
         print(firstRow + "\n" + secondRow)
@@ -86,6 +97,7 @@ while True:
 
     except KeyboardInterrupt:
         grovepi.digitalWrite(relay, 0)
+        camera.stop_preview()
         break
     except IOError:
         logger.error('IO Error')

@@ -1,0 +1,1 @@
+image files will be stored inside this directory
