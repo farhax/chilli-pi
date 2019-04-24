@@ -47,7 +47,10 @@ while True:
         sensor_value = grovepi.analogRead(light_sensor)
 
         # Calculate resistance of sensor in K
-        resistance = (float)(1023 - sensor_value) * 10 / sensor_value
+        if sensor_value == 0:
+            resistance = 0
+        else:
+            resistance = (float)(1023 - sensor_value) * 10 / sensor_value
 
         i = (i + 1) % 10
         if i < 3:
