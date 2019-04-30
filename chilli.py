@@ -82,14 +82,15 @@ while True:
         else:
             resistance = (float)(1023 - sensor_value) * 10 / sensor_value
 
-        i = (i + 1) % 3600
         secondRow = "%d %d" % (sensor_value, resistance)
 
         if i % 10 == 0:  # log every 10s
             log(temp, humidity, sensor_value, switchOn)
 
-        if i == 0:  # capture image every hour
+        if i == 0 or i == 1800:  # capture image every hour
             captureImage()
+
+        i = (i + 1) % 3600
 
         setText(firstRow + "\n" + secondRow)
         print(firstRow + "\n" + secondRow)
