@@ -20,8 +20,8 @@ logger.addHandler(handler)
 logger.setLevel(logging.INFO)
 
 
-def log(temp, humidity, sensor_value, switchOn):
-    logger.info("temp: %0.2fC, humidity: %0.2f%%, light-sensor: %d, light-switch: %d" % (temp, humidity, sensor_value, switchOn))
+def log(temp, humidity, moist_value, light_value, switchOn):
+    logger.info("temp: %0.2fC, humidity: %0.2f%%, moisture: %d, light-sensor: %d, light-switch: %d" % (temp, humidity, moist_value, light_value, switchOn))
 
 
 def captureImage():
@@ -31,6 +31,7 @@ def captureImage():
 dht_sensor = 3  # The Temp & Hum Sensor goes on digital port 3.
 relay = 4  # Connect the Grove Relay to digital port D4
 light_sensor = 0  # Grove Light Sensor to analog port A0
+moist_sensor = 1 # Funduino - Moisture sensor, A1
 
 onTime = 5
 offTime = 21
@@ -73,19 +74,14 @@ while True:
         if math.isnan(temp) is False and math.isnan(humidity) is False:
             firstRow = "%dC %d%%" % (temp, humidity)
 
-        # Get sensor value
-        sensor_value = grovepi.analogRead(light_sensor)
+        # Get sensor values
+        light_value = grovepi.analogRead(light_sensor)
+        moist_value = grovepi.analogRead(moist_sensor)
 
-        # Calculate resistance of sensor in K
-        if sensor_value == 0:
-            resistance = 0
-        else:
-            resistance = (float)(1023 - sensor_value) * 10 / sensor_value
-
-        secondRow = "%d %d" % (sensor_value, resistance)
+        secondRow = "%d %d" % (light_value, moist_value)
 
         if i % 10 == 0:  # log every 10s
-            log(temp, humidity, sensor_value, switchOn)
+            log(temp, humidity, moist_value, light_value, switchOn)
 
         if i == 0 or i == 1800:  # capture image every hour
             captureImage()
