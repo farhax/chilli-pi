@@ -25,6 +25,7 @@ def log(temp, humidity, moist_value, light_value, switchOn):
 
 
 def captureImage():
+    camera.resolution = (1024, 768)
     camera.capture('images/%s.jpg' % dt.datetime.now())
 
 
