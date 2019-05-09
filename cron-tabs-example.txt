@@ -1,0 +1,10 @@
+0 0 * * *  /home/pi/run.sh   # run every midnight
+*/5 * * * * /home/pi/run.sh  # run every 5minutes,
+0,30 * * * * /home/pi/run.sh # run every 0 and 30min, 0:00, 0:30, 1:00
+* * * * * /home/pi/backup.sh # run every 1 minute
+
+EXAMPLE:
+
+* * * * *  python3 <PATH>/run_sensors.py
+0,30 * * * *  python3 <PATH>/run_camera.py
+0 * * * *  python3 <PATH>/run_ip_check.py
