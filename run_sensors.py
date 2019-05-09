@@ -5,6 +5,7 @@ import datetime as dt
 import logging
 
 from logging.handlers import TimedRotatingFileHandler
+from time import sleep
 from grove_rgb_lcd import *
 
 
@@ -68,7 +69,7 @@ if __name__ == "__main__":
                 log(temp, humidity, moist_value, light_value, switchOn)
 
             if x != 4:
-                time.sleep(10.00)
+                sleep(10.00)
 
         except KeyboardInterrupt:
             grovepi.digitalWrite(relay, 0)
