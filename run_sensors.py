@@ -3,6 +3,7 @@ import grovepi
 import math
 import datetime as dt
 import logging
+import os
 
 from logging.handlers import TimedRotatingFileHandler
 from time import sleep
@@ -15,8 +16,9 @@ def log(temp, humidity, moist_value, light_value, switchOn):
 
 if __name__ == "__main__":
 
+    path = os.path.dirname(os.path.abspath(__file__)) + '/'
     logger = logging.getLogger('myapp')
-    logname = "logs/chilli.log"
+    logname = path + 'logs/chilli.log'
     handler = TimedRotatingFileHandler(logname, when="midnight", interval=1)
     handler.suffix = "%Y%m%d"
     formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
