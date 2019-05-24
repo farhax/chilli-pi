@@ -8,3 +8,4 @@ EXAMPLE:
 * * * * *  python3 /home/pi/Development/chilli-pi/run_sensors.py
 0,30 * * * *  python3 /home/pi/Development/chilli-pi/run_camera.py
 0 * * * *  python3 /home/pi/Development/chilli-pi/run_ip_check.py
+0 0 * * *  /home/pi/Development/chilli-pi/update.sh
