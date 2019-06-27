@@ -8,10 +8,15 @@ import os
 from logging.handlers import TimedRotatingFileHandler
 from time import sleep
 from grove_rgb_lcd import *
+from mqtt_client import *
 
 
 def log(temp, humidity, moist_value, light_value, switchOn):
     logger.info("temp: %0.2fC, humidity: %0.2f%%, moisture: %d, light-sensor: %d, light-switch: %d" % (temp, humidity, moist_value, light_value, switchOn))
+
+def uploadValues(temp, humidity, moist_value, light_value, switchOn):
+    sttr = '{"state":{"reported":{"temp":"%0.2fC","humidity":"%0.2f%%","moisture":"%d","light-sensor":"%d","light-switch":"%d"}}}' % (temp, humidity, moist_value, light_value, switchOn);
+    shadowUpdate(sttr)
 
 
 if __name__ == "__main__":
@@ -51,7 +56,6 @@ if __name__ == "__main__":
 
             # blue=0, white=1
             [temp, humidity] = grovepi.dht(dht_sensor, 0)
-            setRGB(32, 128, 32)
 
             firstRow = ""
             secondRow = ""
@@ -65,16 +69,18 @@ if __name__ == "__main__":
 
             secondRow = "%d %d" % (light_value, moist_value)
 
-            setText(firstRow + "\n" + secondRow)
-
             if x == 0:
                 log(temp, humidity, moist_value, light_value, switchOn)
-
+                uploadValues(temp, humidity, moist_value, light_value, switchOn)
             if x != 4:
                 sleep(10.00)
+
+            setRGB(32, 128, 32)
+            setText(firstRow + "\n" + secondRow)
 
         except KeyboardInterrupt:
             grovepi.digitalWrite(relay, 0)
             break
         except IOError:
+            print('IO Error')
             logger.error('IO Error')
