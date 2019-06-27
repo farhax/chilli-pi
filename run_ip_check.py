@@ -3,6 +3,7 @@
 # sudo python3 /home/pi/Development/chilli-pi/ip_lcd.py &
 
 import socket
+from mqtt_client import *
 
 if __name__ == "__main__":
 
@@ -13,3 +14,4 @@ if __name__ == "__main__":
     s.close()
 
     print(ip)
+    shadowUpdate('{"state":{"reported":{"local ip address":"' + ip + '"}}}')
