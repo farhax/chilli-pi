@@ -9,13 +9,15 @@ from logging.handlers import TimedRotatingFileHandler
 from time import sleep
 from grove_rgb_lcd import *
 from mqtt_client import *
+from ip_check import *
 
 
 def log(temp, humidity, moist_value, light_value, switchOn):
     logger.info("temp: %0.2fC, humidity: %0.2f%%, moisture: %d, light-sensor: %d, light-switch: %d" % (temp, humidity, moist_value, light_value, switchOn))
 
 def uploadValues(temp, humidity, moist_value, light_value, switchOn):
-    sttr = '{"state":{"reported":{"temp":"%0.2fC","humidity":"%0.2f%%","moisture":"%d","light-sensor":"%d","light-switch":"%d"}}}' % (temp, humidity, moist_value, light_value, switchOn);
+    ip = getIp()
+    sttr = '{"state":{"reported":{"temp":"%0.2fC","humidity":"%0.2f%%","moisture":"%d","light-sensor":"%d","light-switch":"%d","ip":"%s"}}}' % (temp, humidity, moist_value, light_value, switchOn, ip);
     shadowUpdate(sttr)
 
 
